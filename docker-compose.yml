@@ -6,9 +6,12 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: ${POSTGRES_DB-test_k8s}
-      POSTGRES_USER: ${POSTGRES_USER-test_k8s}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD-OwOtBep9Frut}
+      POSTGRES_DB: ${POSTGRES_DB:-test_k8s}
+      POSTGRES_USER: ${POSTGRES_USER:-test_k8s}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-OwOtBep9Frut}
+    ports:
+      - "172.23.32.76:5432:5432"
+
 
   web:
     build: backend_main_django
