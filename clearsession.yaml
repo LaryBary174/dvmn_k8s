@@ -4,6 +4,8 @@ metadata:
   name: clear-django-sessions
 spec:
   schedule: "*/1 * * * *"
+  startingDeadlineSeconds: 60
+  ttlSecondsAfterFinished: 10000
   jobTemplate:
     spec:
       template:

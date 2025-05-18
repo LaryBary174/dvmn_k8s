@@ -1,0 +1,34 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: django-migrate
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: django-migrate
+          image: django_app:latest
+          command: [ "python3", "manage.py", "migrate" ]
+          env:
+            - name: DEBUG
+              valueFrom:
+                secretKeyRef:
+                  name: django-secrets
+                  key: DEBUG
+            - name: SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: django-secrets
+                  key: SECRET_KEY
+            - name: ALLOWED_HOSTS
+              valueFrom:
+                secretKeyRef:
+                  name: django-secrets
+                  key: ALLOWED_HOSTS
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: django-secrets
+                  key: DATABASE_URL
+          imagePullPolicy: Never
