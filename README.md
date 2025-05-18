@@ -75,3 +75,77 @@ $ docker compose build web
 `ALLOWED_HOSTS` -- настройка Django со списком разрешённых адресов. Если запрос прилетит на другой адрес, то сайт ответит ошибкой 400. Можно перечислить несколько адресов через запятую, например `127.0.0.1,192.168.0.1,site.test`. [Документация Django](https://docs.djangoproject.com/en/3.2/ref/settings/#allowed-hosts).
 
 `DATABASE_URL` -- адрес для подключения к базе данных PostgreSQL. Другие СУБД сайт не поддерживает. [Формат записи](https://github.com/jacobian/dj-database-url#url-schema).
+
+# Minikube
+Необходимо по инструкции установить [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
+Скачать файлы и внести их расположение в системные переменные среды env ОС
+[minikube](https://kubernetes.io/ru/docs/tasks/tools/install-minikube/)
+[kubectl](https://kubernetes.io/ru/docs/tasks/tools/install-kubectl/)
+
+## Запуск minikube
+Команда для запуска :
+```
+minikube start --driver=virtualbox --no-vtx-check
+```
+## Docker Image 
+Сборка docker images по dockerfile в данном проекте
+
+Для использования Docker напрямую в контексте Minikube необходимо выполнить команду:
+```
+minikube -p minikube docker-env --shell powershell | Invoke-Expression
+
+```
+Дальше переходим в директорию Dockerfile и производим сборку image данного приложения:
+```
+docker build -t django-app:latest .
+
+```
+## Secrets
+Необходимо создать файл django-secrets.yaml и там разместить все чувствительные данные
+Обязательно значение должно быть в кодировке base64
+Пример файла с секретами:
+```
+apiVersion: v1
+kind: Secret
+metadata:
+  name: django-secrets
+type: Opaque
+data:
+  SECRET_KEY: bXktc3VwZXItc2VjcmV0LWtleQ==
+  DATABASE_URL: cG9zdGdyZXM6Ly90ZXN0X2s4czpPd090QmVwOUZydXRAMTcyLjIzLjMyLjc2OjU0MzIvdGVzdF9rOHM=
+  DEBUG: VHJ1ZQ==
+  ALLOWED_HOSTS: c3Rhci1idXJnZXIudGVzdA==
+
+```
+далее применяем эти секреты командой:
+```
+kubectl apply -f django-secrets.yaml
+```
+
+## Развертываем приложение по шагам
+Установка Ingress:
+```
+kubectl apply -f https://projectcontour.io/quickstart/contour.yaml
+```
+Добавление для теста изменения в файл [hosts](https://help.reg.ru/support/dns-servery-i-nastroyka-zony/rabota-s-dns-serverami/fayl-hosts-gde-nakhoditsya-i-kak-yego-izmenit)
+```
+192.168.59.100 star-burger.test
+```
+
+Запускаем файл deployment.yaml :
+```
+kubectl apply -f deployment.yaml
+```
+
+Запускаем файл service.yaml :
+```
+kubectl apply -f service.yaml
+```
+
+Запускаем файл ingress.yaml : 
+
+```
+kubectl apply -f service.yaml
+```
+Готово теперь приложение доступно по адресу http://star-burger.test
+
