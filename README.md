@@ -81,6 +81,7 @@ $ docker compose build web
 Скачать файлы и внести их расположение в системные переменные среды env ОС
 [minikube](https://kubernetes.io/ru/docs/tasks/tools/install-minikube/)
 [kubectl](https://kubernetes.io/ru/docs/tasks/tools/install-kubectl/)
+[helm](https://github.com/helm/helm/releases)
 
 ## Запуск minikube
 Команда для запуска :
@@ -100,6 +101,16 @@ minikube -p minikube docker-env --shell powershell | Invoke-Expression
 docker build -t django-app:latest .
 
 ```
+## Postgresql развертываем в кластере
+Пишем команду:
+
+```
+helm install postgresql oci://registry-1.docker.io/bitnamicharts/postgresql -f .\postgresql-values.yaml
+```
+
+В файле postgresql-values.yaml не забываем вписать свои данные для бд
+
+
 ## Secrets
 Необходимо создать файл django-secrets.yaml и там разместить все чувствительные данные
 Обязательно значение должно быть в кодировке base64
