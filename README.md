@@ -156,7 +156,7 @@ kubectl apply -f service.yaml
 Запускаем файл ingress.yaml : 
 
 ```
-kubectl apply -f service.yaml
+kubectl apply -f ingress.yaml
 ```
 Готово теперь приложение доступно по адресу http://star-burger.test
 
