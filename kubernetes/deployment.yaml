@@ -16,27 +16,9 @@ spec:
       containers:
         - name: django-app-1
           image: django_app:latest
-          env:
-          - name: DEBUG
-            valueFrom:
-              secretKeyRef:
-                name: django-secrets
-                key: DEBUG
-          - name: SECRET_KEY
-            valueFrom:
-              secretKeyRef:
-                name: django-secrets
-                key: SECRET_KEY
-          - name: ALLOWED_HOSTS
-            valueFrom:
-              secretKeyRef:
-                name: django-secrets
-                key: ALLOWED_HOSTS
-          - name: DATABASE_URL
-            valueFrom:
-              secretKeyRef:
-                name: django-secrets
-                key: DATABASE_URL
+          envFrom:
+          - secretRef:
+              name: django-secrets
           imagePullPolicy: Never
           ports:
             - containerPort: 80
