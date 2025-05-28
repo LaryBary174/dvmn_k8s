@@ -4,7 +4,7 @@ metadata:
   name: static-web
   namespace: edu-gloomy-ptolemy
   labels:
-    role: myrole
+    entity: static-web
 spec:
   containers:
     - name: web
