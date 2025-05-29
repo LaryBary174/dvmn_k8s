@@ -160,3 +160,25 @@ kubectl apply -f ingress.yaml
 ```
 Готово теперь приложение доступно по адресу http://star-burger.test
 
+## Сборка образа и пуш в DockerHub
+
+Для сборки образа с commit hash необходимо выполнить команды
+Получение хэша коммита
+```
+export commit_hash=$(git rev-parse --short HEAD)
+
+```
+Сборка образа
+```
+docker build -t username/imagename: $commit_hash
+```
+
+Перед пушем необходимо залогиниться командой:
+```
+docker login
+```
+
+Пушим образ:
+```
+docker push username/imagename: $commit_hash
+```

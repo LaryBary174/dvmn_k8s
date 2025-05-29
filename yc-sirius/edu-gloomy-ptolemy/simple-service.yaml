@@ -9,6 +9,6 @@ spec:
     entity: static-web
   ports:
     - protocol: TCP
-      nodePort: 30007
+      nodePort: 31256
       port: 80
       targetPort: 80
