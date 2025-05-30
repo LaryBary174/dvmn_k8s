@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: django-service
+  namespace: edu-gloomy-ptolemy
+  labels:
+    app: django-app
+spec:
+  type: NodePort
+  selector:
+    project: django-proj
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 31256

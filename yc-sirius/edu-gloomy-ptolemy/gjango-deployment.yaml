@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-deploy
+  namespace: edu-gloomy-ptolemy
+  labels:
+    app: django-app
+spec:
+  selector:
+    matchLabels:
+      project: django-proj
+  template:
+    metadata:
+      labels:
+        project: django-proj
+    spec:
+      containers:
+        - name: django-app
+          image: larybary/dvmn_k8s_djangoapp:c43d3f1
+          envFrom:
+          - secretRef:
+              name: django-secrets
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - mountPath: /root/.postgresql
+              name: pg-root-cert
+              readOnly: true
+      volumes:
+        - name: pg-root-cert
+          secret:
+            secretName: pg-root-cert
+            defaultMode: 0o600
+

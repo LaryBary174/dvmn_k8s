@@ -182,3 +182,66 @@ docker login
 ```
 docker push username/imagename: $commit_hash
 ```
+
+
+# Разворачиваем приложение на удаленном кластере
+Необходимо получить доступ к удаленному кластеру, получить `namespace` которы необходимо указывать во всех манифестах
+Пример инструкции к ресурсам кластера[Пример](https://sirius-env-registry.website.yandexcloud.net/edu-gloomy-ptolemy.html)
+
+Можно вести работу в IDE с графическим интерфейсом например как [Lens Desktop](https://docs.k8slens.dev/getting-started/install-lens/)
+
+## Подключение к БД
+Для подключения к бд необходимо получить сертификат SSL
+Добавить содержимое сертификата в кодировке base 64 в манифест cert-root.yaml и запустить командой:
+```
+kubectl apply -f ./cert-root.yaml
+```
+Для проверки подключения к БД запустите манифест psql.yaml
+
+## Развертываем приложение по шагам
+Необходимо создать файл django-secrets.yaml и там разместить все чувствительные данные
+Обязательно значение должно быть в кодировке base64
+Пример файла с секретами:
+```
+apiVersion: v1
+kind: Secret
+metadata:
+  name: django-secrets
+type: Opaque
+data:
+  SECRET_KEY: bXktc3VwZXItc2VjcmV0LWtleQ==
+  DATABASE_URL: cG9zdGdyZXM6Ly90ZXN0X2s4czpPd090QmVwOUZydXRAMTcyLjIzLjMyLjc2OjU0MzIvdGVzdF9rOHM=
+  DEBUG: VHJ1ZQ==
+  ALLOWED_HOSTS: c3Rhci1idXJnZXIudGVzdA==
+
+```
+далее применяем эти секреты командой:
+```
+kubectl apply -f django-secrets.yaml
+```
+
+Запускаем манифесты django-deployment.yaml и django-service.yaml:
+```
+kubectl apply -f django-deployment.yaml
+kubectl apply -f django-service.yaml
+```
+
+Выполняем миграцию
+```
+kubectl apply -f django-migrate.yaml
+```
+
+Для создания суперпользователя необходимо войти в под, созданный манифестом django-deployment.yaml и там выполнить команду джанго manage.py createsuperuser
+
+```
+kubectl exec podname -it -- /bin/bash/
+```
+
+Добавляем автоматическую чистку сессий
+
+```
+kubectl apply -f django-clearsession.yaml
+```
+
+
+[Пример проекта](https://edu-gloomy-ptolemy.sirius-k8s.dvmn.org/)

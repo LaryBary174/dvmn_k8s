@@ -1,0 +1,17 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: django-migrate
+  namespace: edu-gloomy-ptolemy
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: django-migrate
+          image: larybary/dvmn_k8s_djangoapp:c43d3f1
+          command: [ "python3", "manage.py", "migrate" ]
+          envFrom:
+            - secretRef:
+                name: django-secrets
+          imagePullPolicy: IfNotPresent

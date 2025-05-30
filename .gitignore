@@ -2,6 +2,6 @@
 __pycache__/
 *.py[cod]
 *$py.class
-django-secrets.yaml
+yc-sirius/edu-gloomy-ptolemy/django-secrets.yaml
 .idea
 .env

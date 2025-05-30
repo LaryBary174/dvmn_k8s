@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: clear-django-sessions
+  namespace: edu-gloomy-ptolemy
+spec:
+  schedule: "*/1 * * * *"
+
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: clear-sessions
+              image: larybary/dvmn_k8s_djangoapp:c43d3f1
+              command: [ "python3", "manage.py", "clearsessions" ]
+              envFrom:
+                - secretRef:
+                    name: django-secrets
+              imagePullPolicy: IfNotPresent
